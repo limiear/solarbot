@@ -1,2 +1,4 @@
-# pergasolar
-Feed twitter with a GERSolar radiation map inside raspberrypi.
+pergasolar
+==========
+
+Feed twitter with the Pergamino radiation map using the GERSolar estimation model running inside raspbian.

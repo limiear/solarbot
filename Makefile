@@ -11,6 +11,10 @@ SOURCE_ACTIVATE=$(PYTHONLIBS) . bin/activate;
 unattended:
 	@ (sudo ls 2>&1) >> tracking.log
 
+ubuntu:
+	@ sudo apt-get -y install zlibc libssl1.0.0 libbz2-dev libxslt1-dev libxml2-dev python-gevent python-virtualenv python-dev libfreetype6-dev libpng12-dev
+	@ echo "[ assume       ] ubuntu distribution"
+
 bin/activate: requirements.txt
 	@ echo "[ using        ] $(PYTHONPATH)"
 	@ echo "[ installing   ] $(VIRTUALENV)"

@@ -1,9 +1,11 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.png
 
 # C extensions
 *.so
+*.*~
 
 # Distribution / packaging
 .Python
@@ -14,6 +16,10 @@ dist/
 downloads/
 eggs/
 lib/
+bin/
+include/
+share/
+man/
 lib64/
 parts/
 sdist/

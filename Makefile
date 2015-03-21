@@ -35,7 +35,7 @@ show-version:
 	@ $(SOURCE_ACTIVATE) $(PYTHON) --version
 
 run:
-	@ $(SOURCE_ACTIVATE) $(PYTHON) -c "from pergasolar import bot; bot.run()"
+	@ $(SOURCE_ACTIVATE) $(PYTHON) pergasolar/bot.py
 
 test:
 	@ $(SOURCE_ACTIVATE) $(PYTHON) tests

@@ -115,8 +115,8 @@ class Presenter(object):
         dt_str = str(dt_here)
         self.say('Radiación de %s: %s' % (dt_str, json.dumps(radiations)),
                  'ecolell')
-        #filename = draw(filepattern, 'map.png')
-        #self.tweet('Radiación de %s.' % dt_str, filename)
+        filename = draw(filepattern, 'map.png')
+        self.tweet('Radiación de %s.' % dt_str, filename)
 
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))

@@ -129,7 +129,7 @@ class Presenter(object):
                                   datetime_filter=should_download)
         self.files = glob.glob('%s/goes13.*.BAND_01.nc' % self.directory)
         sorted(self.files)
-        if len(self.files) >= 28:
+        if len(self.files) >= 28 and filenames:
             begin = datetime.now()
             heliosat.workwith('%s/goes13.*.BAND_01.nc' % self.directory)
             end = datetime.now()

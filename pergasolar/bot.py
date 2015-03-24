@@ -112,13 +112,14 @@ class Presenter(object):
         local = pytz.timezone('America/Argentina/Buenos_Aires')
         dt = gmt.localize(get_datetime(self.files[-1]))
         dt_here = dt.astimezone(local)
-        dt_str = str(dt_here)
-        radiations = map(lambda t: t[0] + ': ' + str(t[1][0]), radiations.items())
+        dt_str = str(dt_here.time())
+        radiations = map(lambda t: t[0] + ': ' + t[1][0], radiations.items())
+        users = ['ecolell', 'adr_rol']
         for r in radiations:
-            self.say('[%s] Radiación de %s' % (dt_str, r),
+            self.say('[%s] Irradiancia medida en W/(m^2*sr) de %.2f' % (dt_str, r),
                      'ecolell')
         filename = draw(filepattern, 'map.png')
-        self.tweet('Radiación de %s.' % dt_str, filename)
+        self.tweet('Irradiancia de %s medida en W/(m^2*sr).' % dt_str, filename)
 
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))

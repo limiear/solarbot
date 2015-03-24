@@ -8,7 +8,7 @@ def draw(filepattern, filename):
         y, x = data.shape
         plt.figure(figsize=(x/20, y/20))
         img = plt.imshow(data)
-        img.set_clim(0, data.max())
+        img.set_clim(0, 1300)  # data.max())
         title = root.files[-1].split('/')[-1]
         plt.title(title)
         plt.colorbar()

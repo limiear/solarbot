@@ -104,7 +104,7 @@ class Presenter(object):
         places = {
             'home': (-33.910528, -60.581059),
             'inta': (-33.944332, -60.568668),
-            'country': (-34.030531, -60.476578),
+            'campo': (-34.030531, -60.476578),
             'ernesto': (-33.459296, -61.041577),
         }
         radiations = self.getlastradiation(filepattern, places)
@@ -113,8 +113,10 @@ class Presenter(object):
         dt = gmt.localize(get_datetime(self.files[-1]))
         dt_here = dt.astimezone(local)
         dt_str = str(dt_here)
-        self.say('Radiación de %s: %s' % (dt_str, json.dumps(radiations)),
-                 'ecolell')
+        radiations = map(lambda t: t[0] + ': ' + str(t[1][0]), radiations.items())
+        for r in radiations:
+            self.say('[%s] Radiación de %s' % (dt_str, r),
+                     'ecolell')
         filename = draw(filepattern, 'map.png')
         self.tweet('Radiación de %s.' % dt_str, filename)
 

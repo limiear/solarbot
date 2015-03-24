@@ -120,7 +120,7 @@ class Presenter(object):
                 self.say('[%s] Irradiancia medida en W/(m^2*sr) de %.2f' % (dt_str, r),
                          u)
         filename = draw(filepattern, 'map.png')
-        self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del modelo de @gersolar.' % dt_str, filename)
+        self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del modelo de @gersolar. #raspberrypi' % dt_str, filename)
 
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))

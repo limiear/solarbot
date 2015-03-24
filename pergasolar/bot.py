@@ -115,9 +115,10 @@ class Presenter(object):
         dt_str = str(dt_here.time())
         radiations = map(lambda t: t[0] + ': ' + t[1][0], radiations.items())
         users = ['ecolell', 'adr_rol']
-        for r in radiations:
-            self.say('[%s] Irradiancia medida en W/(m^2*sr) de %.2f' % (dt_str, r),
-                     'ecolell')
+        for u in users:
+            for r in radiations:
+                self.say('[%s] Irradiancia medida en W/(m^2*sr) de %.2f' % (dt_str, r),
+                         u)
         filename = draw(filepattern, 'map.png')
         self.tweet('Irradiancia de %s medida en W/(m^2*sr).' % dt_str, filename)
 

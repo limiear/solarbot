@@ -115,10 +115,8 @@ class Presenter(object):
         gmt = pytz.timezone('GMT')
         local = pytz.timezone('America/Argentina/Buenos_Aires')
         dt = gmt.localize(get_datetime(self.files[-1]))
-        dt_here = dt.astimezone(local).astimezone(tz=None)
-        print dt_here
-        dt_str = str(dt_here.time())
-        print dt_str
+        dt_here = dt.astimezone(local)
+        dt_str = str(dt_here).split('  ')[-1]
         radiations = map(lambda t: "%s: %.2f" % (t[0], t[1][0]),
                          radiations.items())
         users = ['ecolell', 'adr_rol']

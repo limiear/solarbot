@@ -80,7 +80,7 @@ class Presenter(object):
         area_map = ("http://maps.googleapis.com/maps/api/staticmap?"
                     "center=%s&zoom=8&size=400x400&maptype=satellite&"
                     "sensor=false&path=color:red|weight:5|"
-                "fillcolor:white|%s" % (to_string([refs[0]]), refs_str))
+                    "fillcolor:white|%s" % (to_string([refs[0]]), refs_str))
         urllib.urlretrieve(area_map, 'area_map.png')
         print area_map
         return area_map

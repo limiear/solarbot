@@ -15,8 +15,8 @@ from netcdf import netcdf as nc
 import numpy as np
 import os
 import glob
-import json
 import pytz
+import urllib
 
 short = (lambda f, start=2, end=-2:
                   ".".join((f.split('/')[-1]).split('.')[start:end]))
@@ -77,10 +77,13 @@ class Presenter(object):
         refs[2], refs[3] = refs[3], refs[2]
         refs.append(refs[0])
         refs_str = to_string(refs)
-        return ("http://maps.googleapis.com/maps/api/staticmap?"
-                "center=%s&zoom=8&size=600x600&maptype=satellite&sensor=false&"
-                "path=color:red|weight:5|"
+        area_map = ("http://maps.googleapis.com/maps/api/staticmap?"
+                    "center=%s&zoom=8&size=400x400&maptype=satellite&"
+                    "sensor=false&path=color:red|weight:5|"
                 "fillcolor:white|%s" % (to_string([refs[0]]), refs_str))
+        urllib.urlretrieve(area_map, 'area_map.png')
+        print area_map
+        return area_map
 
     def getlastradiation(self, filepattern, places):
         radiations = []
@@ -113,14 +116,18 @@ class Presenter(object):
         local = pytz.timezone('America/Argentina/Buenos_Aires')
         dt = gmt.localize(get_datetime(self.files[-1]))
         dt_here = dt.astimezone(local)
+        print dt_here
         dt_str = str(dt_here.time())
-        radiations = map(lambda t: (t[0], t[1][0]), radiations.items())
-        users = ['ecolell'] #, 'adr_rol']
+        print dt_str
+        radiations = map(lambda t: "%s: %.2f" % (t[0], t[1][0]),
+                         radiations.items())
+        users = ['ecolell', 'adr_rol']
         for u in users:
-            for r in radiations:
-                self.say('[%s] Irradiancia medida en W/(m^2*sr) de %s: %.2f' %
-                         (dt_str, r[0], r[1]), u)
+            radiations = ', '.join(radiations)
+            self.say('[%s] Irradiancias (W/[m^2*sr]): [%s]' %
+                     (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png')
+        filename.insert(0, 'area_map.png')
         self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del '
                    'modelo de @gersolar. #raspberrypi' % dt_str, filename)
 

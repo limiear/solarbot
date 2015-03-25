@@ -120,15 +120,24 @@ class Presenter(object):
                 self.say('[%s] Irradiancia medida en W/(m^2*sr) de %.2f' % (dt_str, r),
                          u)
         filename = draw(filepattern, 'map.png')
-        self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del modelo de @gersolar. #raspberrypi' % dt_str, filename)
+        self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del '
+                   'modelo de @gersolar. #raspberrypi' % dt_str, filename)
 
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))
         decimal = lambda dt, h: diff(dt, h).hour + diff(dt, h).minute / 60. + diff(dt, h).second / 3600.
         should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 18
-        filenames = goes.download(USER, PASS, './%s' % self.directory,
-                                  name=NAME,
-                                  datetime_filter=should_download)
+        error_message = "time data '' does not match format '%Y-%m-%d %H:%M:%S'"
+        while True:
+            try:
+                filenames = goes.download(USER, PASS, './%s' % self.directory,
+                                          name=NAME,
+                                          datetime_filter=should_download)
+                break
+            except ValueError, e:
+                print e
+                if e != error_message:
+                    break
         self.files = glob.glob('%s/goes13.*.BAND_01.nc' % self.directory)
         sorted(self.files)
         if len(self.files) >= 28 and filenames:

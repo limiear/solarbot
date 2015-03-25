@@ -122,8 +122,8 @@ class Presenter(object):
         radiations = map(lambda t: "%s: %.2f" % (t[0], t[1][0]),
                          radiations.items())
         users = ['ecolell', 'adr_rol']
+        radiations = ', '.join(radiations)
         for u in users:
-            radiations = ', '.join(radiations)
             self.say('[%s] Irradiancias (W/[m^2*sr]): [%s]' %
                      (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png')

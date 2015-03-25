@@ -62,6 +62,7 @@ class Presenter(object):
         print status, len(status)
 
     def say(self, status, screen_name):
+        print status, len(status), screen_name
         self.twitter.send_direct_message(screen_name=screen_name, text=status)
 
     def indexes(self, lat, lon, place):
@@ -113,12 +114,12 @@ class Presenter(object):
         dt = gmt.localize(get_datetime(self.files[-1]))
         dt_here = dt.astimezone(local)
         dt_str = str(dt_here.time())
-        radiations = map(lambda t: t[0] + ': ' + t[1][0], radiations.items())
-        users = ['ecolell', 'adr_rol']
+        radiations = map(lambda t: (t[0], t[1][0]), radiations.items())
+        users = ['ecolell'] #, 'adr_rol']
         for u in users:
             for r in radiations:
-                self.say('[%s] Irradiancia medida en W/(m^2*sr) de %.2f' % (dt_str, r),
-                         u)
+                self.say('[%s] Irradiancia medida en W/(m^2*sr) de %s: %.2f' %
+                         (dt_str, r), u)
         filename = draw(filepattern, 'map.png')
         self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del '
                    'modelo de @gersolar. #raspberrypi' % dt_str, filename)
@@ -134,13 +135,16 @@ class Presenter(object):
                                           name=NAME,
                                           datetime_filter=should_download)
                 break
-            except ValueError, e:
+            except Exception, e:
                 print e
                 if e != error_message:
                     break
         self.files = glob.glob('%s/goes13.*.BAND_01.nc' % self.directory)
         sorted(self.files)
-        if len(self.files) >= 28 and filenames:
+        name = lambda f: f.split('/')[-1]
+        temps = set(map(name, glob.glob('temporal_data/*.nc')))
+        pendings = list(set(map(name, self.files)) - temps)
+        if len(self.files) >= 28 and len(pendings) > 0:
             begin = datetime.now()
             heliosat.workwith('%s/goes13.*.BAND_01.nc' % self.directory)
             end = datetime.now()

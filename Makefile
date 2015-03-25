@@ -35,6 +35,7 @@ show-version:
 	@ $(SOURCE_ACTIVATE) $(PYTHON) --version
 
 run:
+	@ date
 	@ $(SOURCE_ACTIVATE) $(PYTHON) pergasolar/bot.py
 
 test:

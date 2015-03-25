@@ -119,14 +119,15 @@ class Presenter(object):
         for u in users:
             for r in radiations:
                 self.say('[%s] Irradiancia medida en W/(m^2*sr) de %s: %.2f' %
-                         (dt_str, r), u)
+                         (dt_str, r[0], r[1]), u)
         filename = draw(filepattern, 'map.png')
         self.tweet('Irradiancia de %s medida en W/(m^2*sr) a partir del '
                    'modelo de @gersolar. #raspberrypi' % dt_str, filename)
 
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))
-        decimal = lambda dt, h: diff(dt, h).hour + diff(dt, h).minute / 60. + diff(dt, h).second / 3600.
+        decimal = (lambda dt, h: diff(dt, h).hour +
+                   diff(dt, h).minute / 60. + diff(dt, h).second / 3600.)
         should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 18
         error_message = "time data '' does not match format '%Y-%m-%d %H:%M:%S'"
         while True:

@@ -78,7 +78,7 @@ class Presenter(object):
         refs.append(refs[0])
         refs_str = to_string(refs)
         area_map = ("http://maps.googleapis.com/maps/api/staticmap?"
-                    "center=%s&zoom=8&size=400x400&maptype=satellite&"
+                    "center=%s&zoom=7&size=400x400&maptype=roadmap&"
                     "sensor=false&path=color:red|weight:5|"
                     "fillcolor:white|%s" % (to_string([refs[0]]), refs_str))
         urllib.urlretrieve(area_map, 'area_map.png')
@@ -114,19 +114,23 @@ class Presenter(object):
         radiations = self.getlastradiation(filepattern, places)
         gmt = pytz.timezone('GMT')
         local = pytz.timezone('America/Argentina/Buenos_Aires')
-        dt = gmt.localize(get_datetime(self.files[-1]))
+        dt = get_datetime(self.files[-1])
+        print dt
+        dt = gmt.localize(dt)
+        print dt
         dt_here = dt.astimezone(local)
         dt_str = str(dt_here).split(' ')[-1]
+        print dt_here, dt_str
         radiations = map(lambda t: "%s: %.2f" % (t[0], t[1][0]),
                          radiations.items())
-        users = ['ecolell'] # , 'adr_rol']
+        users = ['ecolell', 'gersolar']
         radiations = ', '.join(radiations)
         for u in users:
             self.say('[%s] Irradiancias (W/[m^2*sr]): [%s]' %
                      (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png')
-        self.tweet('Acabamos de procesar la irradiancia de la última media hora '
-                   'para el area de Pergamino.', ['area_map.png'])
+        self.tweet('Acabamos de estiimar la irradiancia solar de la última '
+                   'media hora para el area de Pergamino.', ['area_map.png'])
         self.tweet('[%s] Irradiancia en W/(m^2*sr) a partir del '
                    'modelo de @gersolar. #raspberrypi' % dt_str, filename)
 

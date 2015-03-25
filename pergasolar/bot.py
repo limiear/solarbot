@@ -115,7 +115,7 @@ class Presenter(object):
         gmt = pytz.timezone('GMT')
         local = pytz.timezone('America/Argentina/Buenos_Aires')
         dt = gmt.localize(get_datetime(self.files[-1]))
-        dt_here = dt.astimezone(local)
+        dt_here = dt.astimezone(local).astimezone(tz=None)
         print dt_here
         dt_str = str(dt_here.time())
         print dt_str

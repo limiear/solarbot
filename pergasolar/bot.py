@@ -150,8 +150,7 @@ class Presenter(object):
                 print e
                 if e != error_message:
                     break
-        self.files = glob.glob('%s/goes13.*.BAND_01.nc' % self.directory)
-        sorted(self.files)
+        self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
         name = lambda f: f.split('/')[-1]
         temps = set(map(name, glob.glob('temporal_data/*.nc')))
         pendings = list(set(map(name, self.files)) - temps)
@@ -165,5 +164,6 @@ class Presenter(object):
             db.close(cache)
 
 
-presenter = Presenter()
-presenter.demonstrate()
+if __name__ == '__main__':
+    presenter = Presenter()
+    presenter.demonstrate()

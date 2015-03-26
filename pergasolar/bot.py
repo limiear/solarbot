@@ -139,17 +139,12 @@ class Presenter(object):
         decimal = (lambda dt, h: diff(dt, h).hour +
                    diff(dt, h).minute / 60. + diff(dt, h).second / 3600.)
         should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 19
-        error_message = "time data '' does not match format '%Y-%m-%d %H:%M:%S'"
-        while True:
-            try:
-                filenames = goes.download(USER, PASS, './%s' % self.directory,
-                                          name=NAME,
-                                          datetime_filter=should_download)
-                break
-            except Exception, e:
-                print e
-                if e != error_message:
-                    break
+        try:
+            filenames = goes.download(USER, PASS, './%s' % self.directory,
+                                      name=NAME,
+                                      datetime_filter=should_download)
+        except Exception, e:
+            print 'Download skipped: ', e
         self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
         name = lambda f: f.split('/')[-1]
         temps = set(map(name, glob.glob('temporal_data/*.nc')))

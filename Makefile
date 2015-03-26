@@ -7,6 +7,7 @@ PYTHON=bin/python
 EASYINSTALL=bin/easy_install
 VIRTUALENV=virtualenv
 SOURCE_ACTIVATE=$(PYTHONLIBS) . bin/activate; 
+ENVIRON=export LC_ALL=$(LANG); locale; 
 
 unattended:
 	@ (sudo ls 2>&1) >> tracking.log
@@ -36,7 +37,7 @@ show-version:
 
 run:
 	@ date
-	@ $(SOURCE_ACTIVATE) $(PYTHON) pergasolar/bot.py
+	@ $(ENVIRON) $(SOURCE_ACTIVATE) $(PYTHON) pergasolar/bot.py
 
 test:
 	@ $(SOURCE_ACTIVATE) $(PYTHON) tests

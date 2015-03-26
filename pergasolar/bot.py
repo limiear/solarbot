@@ -138,7 +138,7 @@ class Presenter(object):
         diff = lambda dt, h: (dt - timedelta(hours=h))
         decimal = (lambda dt, h: diff(dt, h).hour +
                    diff(dt, h).minute / 60. + diff(dt, h).second / 3600.)
-        should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 18
+        should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 19
         error_message = "time data '' does not match format '%Y-%m-%d %H:%M:%S'"
         while True:
             try:

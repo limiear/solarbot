@@ -147,9 +147,9 @@ class Presenter(object):
             print 'Download skipped: ', e
         self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
         name = lambda f: f.split('/')[-1]
-        temps = set(map(name, glob.glob('temporal_data/*.nc')))
-        pendings = list(set(map(name, self.files)) - temps)
-        if len(self.files) >= 28 and len(pendings) > 0:
+        last_temp = sorted(map(name, glob.glob('temporal_cache/*.nc')))[-1]
+        last_data = name(self.files[-1])
+        if len(self.files) >= 28 and last_temp != last_data:
             begin = datetime.now()
             heliosat.workwith('%s/goes13.*.BAND_01.nc' % self.directory)
             end = datetime.now()

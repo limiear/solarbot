@@ -8,7 +8,9 @@ short = (lambda f, start=2, end=-2:
 get_datetime = lambda f: datetime.strptime(short(f, 1), '%Y.%j.%H%M%S')
 files = glob('data_new/*.nc')
 sorted(files)
+print files[-1]
 dt = get_datetime(files[-1])
+print dt
 gmt = pytz.timezone('GMT')
 local = pytz.timezone('America/Argentina/Buenos_Aires')
 dt = gmt.localize(dt)

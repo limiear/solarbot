@@ -129,7 +129,7 @@ class Presenter(object):
             self.say('[%s] Irradiancias (W/[m^2*sr]): [%s]' %
                      (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png', str(dt_here))
-        self.tweet('Acabamos de estiimar la irradiancia solar de la última '
+        self.tweet('Acabamos de estimar la irradiancia solar de la última '
                    'media hora para el area de Pergamino.', ['area_map.png'])
         self.tweet('[%s] Irradiancia en W/(m^2*sr) a partir del '
                    'modelo de @gersolar. #raspberrypi' % dt_str, filename)

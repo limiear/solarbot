@@ -7,7 +7,7 @@ PYTHON=bin/python
 EASYINSTALL=bin/easy_install
 VIRTUALENV=virtualenv
 SOURCE_ACTIVATE=$(PYTHONLIBS) . bin/activate; 
-ENVIRON=export LC_ALL=$(LANG); locale; 
+ENVIRON=export LC_ALL=$(LANG); 
 
 unattended:
 	@ (sudo ls 2>&1) >> tracking.log

@@ -43,6 +43,9 @@ class Presenter(object):
         self.directory = 'data_new'
         if not os.path.exists(self.directory):
             os.makedirs(self.directory)
+        self.tags = ['raspberrypi', 'noaa', 'goes', 'satellite',
+                     'solarradiation', 'python', 'argentina',
+                     'heliosat2']
 
     def upload_media(self, image):
         with open(image, 'rb') as photo:
@@ -126,14 +129,16 @@ class Presenter(object):
         users = ['ecolell', 'gersolar']
         radiations = ', '.join(radiations)
         for u in users:
-            self.say('[%s] Irradiancias (W/[m^2*sr]): [%s]' %
+            self.say('[%s] Irradiancias (W/[m².sr]): [%s]' %
                      (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png', str(dt_here))
         self.tweet('Acabamos de estimar la irradiancia solar de las '
                    '%s para el area de Pergamino.' % dt_str,
                    ['area_map.png'])
-        self.tweet('[%s] Irradiancia en W/(m^2*sr) a partir del '
-                   'modelo de @gersolar. #raspberrypi' % dt_str, filename)
+        tag = random.choice(self.tags)
+        self.tweet('[%s] Irradiancia en W/(m².sr) a partir del '
+                   'modelo de @gersolar. #%s' % (dt_str, tag),
+                   filename)
 
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))

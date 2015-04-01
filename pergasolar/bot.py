@@ -170,7 +170,8 @@ class Presenter(object):
             print 'Download skipped: ', e
         self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
         name = lambda f: f.split('/')[-1]
-        last_temp = sorted(map(name, glob.glob('temporal_cache/*.nc')))[-1]
+        temps = glob.glob('temporal_cache/*.nc')
+        last_temp = sorted(map(name, temps))[-1] if temps else ''
         last_data = name(self.files[-1])
         if len(self.files) >= 28 and last_temp != last_data:
             begin = datetime.now()

@@ -17,6 +17,7 @@ import os
 import glob
 import pytz
 import urllib
+import matplotlib.pyplot as plt
 
 short = (lambda f, start=2, end=-2:
                   ".".join((f.split('/')[-1]).split('.')[start:end]))
@@ -72,7 +73,22 @@ class Presenter(object):
         diff = np.sqrt((lat - place[0]) ** 2 + (lon - place[1]) ** 2)
         return diff==diff.min()
 
-    def get_area(self, lat, lon):
+    def graph_important_point(self, places):
+        with nc.loader('data_new/*.nc') as root:
+            lat, lon = nc.getvar(root, 'lat'), nc.getvar(root, 'lon')
+            data = np.zeros(lat.shape[1:])
+            for place in places.items():
+                data[self.indexes(lat[0], lon[0], place[1])] = 1
+            y, x = lat.shape[1:]
+            plt.figure(figsize=(x/20, y/20))
+            img = plt.imshow(data)
+            img.set_clim(0, data.max())
+            plt.title('inta')
+            plt.colorbar()
+            plt.axis('off')
+            plt.savefig('location.png', bbox_inches=0)
+
+    def get_area(self, lat, lon, places):
         to_string = lambda refs: '|'.join(map(lambda s: ','.join(s),
                                               refs))
         refs = [[str(lat[0, y, x]), str(lon[0, y, x])]
@@ -84,6 +100,7 @@ class Presenter(object):
                     "center=%s&zoom=7&size=400x400&maptype=roadmap&"
                     "sensor=false&path=color:red|weight:5|"
                     "fillcolor:white|%s" % (to_string([refs[0]]), refs_str))
+        self.graph_important_point(places)
         urllib.urlretrieve(area_map, 'area_map.png')
         print area_map
         return area_map
@@ -92,7 +109,7 @@ class Presenter(object):
         radiations = []
         with nc.loader('static.nc') as static:
             lat, lon = nc.getvar(static, 'lat')[:], nc.getvar(static, 'lon')[:]
-            self.get_area(lat, lon)
+            self.get_area(lat, lon, places)
             idxs = map(lambda (p, c): (p, self.indexes(lat[0], lon[0], c)),
                       places.items())
             shape = lat.shape[1:]

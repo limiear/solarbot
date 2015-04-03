@@ -22,6 +22,9 @@ import matplotlib.pyplot as plt
 short = (lambda f, start=2, end=-2:
                   ".".join((f.split('/')[-1]).split('.')[start:end]))
 get_datetime = lambda f: datetime.strptime(short(f, 1), '%Y.%j.%H%M%S')
+gmt = pytz.timezone('GMT')
+local = pytz.timezone('America/Argentina/Buenos_Aires')
+localize = lambda dt: (gmt.localize(dt)).astimezone(local)
 
 def twython(func):
     def func_wrapper(*args, **kwargs):
@@ -132,13 +135,8 @@ class Presenter(object):
             'ernesto': (-33.459296, -61.041577),
         }
         radiations = self.getlastradiation(filepattern, places)
-        gmt = pytz.timezone('GMT')
-        local = pytz.timezone('America/Argentina/Buenos_Aires')
         dt = get_datetime(self.files[-1])
-        print dt
-        dt = gmt.localize(dt)
-        print dt
-        dt_here = dt.astimezone(local)
+        dt_here = localize(dt)
         dt_str = str(dt_here).split(' ')[-1]
         print dt_here, dt_str
         radiations = map(lambda t: "%s: %.2f" % (t[0], t[1][0]),
@@ -169,6 +167,8 @@ class Presenter(object):
         except Exception, e:
             print 'Download skipped: ', e
         self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
+        in_the_week = lambda f: get_datetime(f) >= datetime.utcnow() - timedelta(days=5)
+        self.files = filter(in_the_week, self.files)
         name = lambda f: f.split('/')[-1]
         temps = glob.glob('temporal_cache/*.nc')
         last_temp = sorted(map(name, temps))[-1] if temps else ''

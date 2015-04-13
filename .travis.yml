@@ -1,10 +1,18 @@
-sudo: true
+sudo: required
 language: python
 python:
   - "2.6"
   - "2.7"
   - "3.2"
   - "3.3"
+cache:
+  directories:
+    - $HOME/noaadem
+    - bin
+    - include
+    - lib
+    - share
+    - /usr/local/lib
 # command to install dependencies
 install:
   - "make ubuntu deploy"

@@ -17,19 +17,17 @@ ubuntu:
 	@ echo "[ assume       ] ubuntu distribution"
 
 swapon:
-	# create swap file of 512 MB
-	dd if=/dev/zero of=/swapfile bs=1k count=512k
-	# modify permissions
-	chown root:root /swapfile
-	chmod 0600 /swapfile
-	# setup swap area
-	mkswap /swapfile
-	# turn swap on
-	swapon /swapfile
+	@ echo "[ creating     ] swap file of 512 MB"
+	@ dd if=/dev/zero of=/swapfile bs=1k count=512k
+	@ chown root:root /swapfile
+	@ chmod 0600 /swapfile
+	@ mkswap /swapfile
+	@ swapon /swapfile
 
 swapoff:
-	swapoff /swapfile
-	rm /swapfile
+	@ echo "[ destroing    ] swap file of 512 MB"
+	@ swapoff /swapfile
+	@ rm /swapfile
 
 bin/activate: requirements.txt
 	@ echo "[ using        ] $(PYTHONPATH)"
@@ -48,6 +46,8 @@ bin/activate: requirements.txt
 
 deploy: bin/activate
 	@ echo "[ deployed     ] the system was completly deployed"
+
+rpi-deploy: swapon deploy swapoff
 
 show-version:
 	@ $(SOURCE_ACTIVATE) $(PYTHON) --version

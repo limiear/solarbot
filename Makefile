@@ -24,7 +24,7 @@ swapon:
 	@ mkswap /swapfile
 	@ swapon /swapfile
 
-swapoff:
+swapoff: bin/activate
 	@ echo "[ destroing    ] swap file of 512 MB"
 	@ swapoff /swapfile
 	@ rm /swapfile

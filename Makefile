@@ -37,13 +37,13 @@ show-version:
 
 run:
 	@ date
-	@ $(ENVIRON) $(SOURCE_ACTIVATE) $(PYTHON) pergasolar/bot.py
+	@ $(ENVIRON) $(SOURCE_ACTIVATE) $(PYTHON) solarbot/bot.py
 
 test:
 	@ $(SOURCE_ACTIVATE) $(PYTHON) tests
 
 test-coverage-travis-ci:
-	@ $(SOURCE_ACTIVATE) coverage run --source='pergasolar/' tests/__main__.py
+	@ $(SOURCE_ACTIVATE) coverage run --source='solarbot/' tests/__main__.py
 
 test-coveralls:
 	@ $(SOURCE_ACTIVATE) coveralls

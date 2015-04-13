@@ -1,6 +1,6 @@
 import unittest
 import abstract
-from pergasolar.model import database as db
+from solarbot.model import database as db
 import os
 
 

@@ -49,12 +49,12 @@ def get_long_description():
 
 
 setup(
-    name='pergasolar',
+    name='solarbot',
     version=version_git,
     author='Limie',
     author_email='limie.ar@gmail.com',
     packages=find_packages(),
-    url='https://github.com/limiear/pergasolar',
+    url='https://github.com/limiear/solarbot',
     license='GNU/GPLv3',
     description=('A python library to show the solar radiation of the '
                  'last past half hour of Pergamino in a twitter timeline.'),

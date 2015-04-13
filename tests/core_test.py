@@ -1,7 +1,7 @@
 import unittest
 import abstract
-from pergasolar.model import database as db
-from pergasolar.model.core import Variable
+from solarbot.model import database as db
+from solarbot.model.core import Variable
 import os
 import datetime
 import requests

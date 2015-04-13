@@ -173,7 +173,7 @@ class Presenter(object):
         temps = glob.glob('temporal_cache/*.nc')
         last_temp = sorted(map(name, temps))[-1] if temps else ''
         last_data = name(self.files[-1])
-	print last_temp, last_data
+        print last_temp, last_data
         if len(self.files) >= 28 and last_temp != last_data:
             begin = datetime.now()
             heliosat.workwith('%s/goes13.*.BAND_01.nc' % self.directory)

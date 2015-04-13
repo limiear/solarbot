@@ -16,6 +16,21 @@ ubuntu:
 	@ sudo apt-get -y install zlibc libssl1.0.0 libbz2-dev libxslt1-dev libxml2-dev python-gevent python-virtualenv python-dev libfreetype6-dev libpng12-dev
 	@ echo "[ assume       ] ubuntu distribution"
 
+swapon:
+	# create swap file of 512 MB
+	dd if=/dev/zero of=/swapfile bs=1k count=512k
+	# modify permissions
+	chown root:root /swapfile
+	chmod 0600 /swapfile
+	# setup swap area
+	mkswap /swapfile
+	# turn swap on
+	swapon /swapfile
+
+swapoff:
+	swapoff /swapfile
+	rm /swapfile
+
 bin/activate: requirements.txt
 	@ echo "[ using        ] $(PYTHONPATH)"
 	@ echo "[ installing   ] $(VIRTUALENV)"
@@ -25,6 +40,8 @@ bin/activate: requirements.txt
 	@ echo "[ installing   ] $(PIP) inside $(VIRTUALENV)"
 	@ ($(SOURCE_ACTIVATE) $(EASYINSTALL) pip 2>&1) >> tracking.log
 	@ echo "[ installing   ] $(PIP) requirements"
+	@ $(SOURCE_ACTIVATE) $(PIP) install pip
+	@ $(SOURCE_ACTIVATE) $(PIP) install distribute
 	@ $(SOURCE_ACTIVATE) $(PIP) install -e  .
 	@ $(SOURCE_ACTIVATE) $(PIP) install --default-timeout=100 -r requirements.development.txt
 	@ touch bin/activate

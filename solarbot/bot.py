@@ -172,7 +172,7 @@ class Presenter(object):
         name = lambda f: f.split('/')[-1]
         temps = glob.glob('temporal_cache/*.nc')
         last_temp = sorted(map(name, temps))[-1] if temps else ''
-        last_data = name(self.files[-1])
+        last_data = name(self.files[-1]) if self.files else ''
         print last_temp, last_data
         if len(self.files) >= 28 and last_temp != last_data:
             begin = datetime.now()

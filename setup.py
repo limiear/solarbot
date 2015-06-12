@@ -55,7 +55,7 @@ setup(
     author_email='limie.ar@gmail.com',
     packages=find_packages(),
     url='https://github.com/limiear/solarbot',
-    license='GNU/GPLv3',
+    license='MIT',
     description=('A python library to show the solar radiation of the '
                  'last past half hour of Pergamino in a twitter timeline.'),
     long_description=get_long_description(),

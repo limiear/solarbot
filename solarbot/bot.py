@@ -35,6 +35,16 @@ def twython(func):
     return func_wrapper
 
 
+def is_a_broked_file(filename):
+    try:
+        with nc.loader(filename) as root:
+            data = nc.getvar(root, 'data')
+            data[:]
+        return False
+    except Exception:
+        return True
+
+
 class Presenter(object):
 
     def __init__(self):
@@ -127,7 +137,7 @@ class Presenter(object):
 
     @twython
     def solarenergy_showcase(self, cache):
-        filepattern = 'temporal_cache/goes13.*.BAND_01.nc'
+        filepattern = 'products/estimated/goes13.*.BAND_01.nc'
         places = {
             'home': (-33.910528, -60.581059),
             'inta': (-33.944332, -60.568668),
@@ -155,6 +165,13 @@ class Presenter(object):
                    'modelo de @gersolar. #%s' % (dt_str, tag),
                    filename)
 
+    def remove_broked_files(self, files):
+        size = lambda f: os.stat(f).st_size
+        median_size = np.median(np.array(map(size, files)))
+        broken = filter(lambda f: size(f) < median_size , files)
+        print broken
+        map(os.remove, broken)
+
     def demonstrate(self):
         diff = lambda dt, h: (dt - timedelta(hours=h))
         decimal = (lambda dt, h: diff(dt, h).hour +
@@ -166,8 +183,9 @@ class Presenter(object):
                                       datetime_filter=should_download)
         except Exception, e:
             print 'Download skipped: ', e
+        self.remove_broked_files(filenames)
         self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
-        in_the_week = lambda f: get_datetime(f) >= datetime.utcnow() - timedelta(days=5)
+        in_the_week = lambda f: get_datetime(f) >= datetime.utcnow() - timedelta(days=30)
         self.files = filter(in_the_week, self.files)
         name = lambda f: f.split('/')[-1]
         temps = glob.glob('temporal_cache/*.nc')

@@ -1,5 +1,5 @@
 PYPREFIX_PATH=/usr
-PYTHONLIBS=LD_LIBRARY_PATH=/usr/lib
+PYTHONLIBS=PIP_DOWNLOAD_CACHE=.cache/pip LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/lib
 PYTHONPATH=$(PYPREFIX_PATH)/bin/python
 FIRST_EASYINSTALL=$(PYTHONLIBS) easy_install
 PIP=pip
@@ -40,7 +40,7 @@ bin/activate: requirements.txt
 	@ echo "[ installing   ] $(PIP) requirements"
 	@ $(SOURCE_ACTIVATE) $(PIP) install --upgrade pip
 	@ $(SOURCE_ACTIVATE) $(PIP) install --upgrade distribute
-	@ $(SOURCE_ACTIVATE) $(PIP) install -e  .
+	@ $(SOURCE_ACTIVATE) $(PIP) install --no-cache-dir -e  .
 	@ $(SOURCE_ACTIVATE) $(PIP) install --default-timeout=100 -r requirements.development.txt
 	@ touch bin/activate
 

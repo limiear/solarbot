@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-from models.runner import heliosat, goes
+from models import JobDescription
+from models.runner import goes
 from twython import Twython, TwythonError
 import model.database as db
 from grapher import draw
@@ -194,7 +195,14 @@ class Presenter(object):
         print last_temp, last_data
         if len(self.files) >= 28 and last_temp != last_data:
             begin = datetime.now()
-            heliosat.workwith('%s/goes13.*.BAND_01.nc' % self.directory)
+            config = {
+                'algorithm': 'heliosat',
+                'data': '%s/goes13.*.BAND_01.nc' % self.directory,
+                'temporal_cache': 'temporal_cache',
+                'product': 'products/estimated'
+            }
+            job = JobDescription(**config)
+            job.run()
             end = datetime.now()
             print 'Elapsed time %.2f seconds.' % (end - begin).total_seconds()
             cache = db.open()

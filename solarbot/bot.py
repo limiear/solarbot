@@ -129,16 +129,17 @@ class Presenter(object):
             shape = lat.shape[1:]
             inside = lambda i, d: 0 < np.where(i)[d][0] < shape[d]
             idxs = filter(lambda (p, i): inside(i, 0) and inside(i, 1), idxs)
-            with nc.loader(filepattern) as root:
+            files = sorted(glob.glob(filepattern))
+            with nc.loader(files[-1]) as root:
                 data = nc.getvar(root, 'globalradiation')
                 radiations = map(lambda (p, c): (p, [
-                    float(data[-1][c]),
-                    float(data[-1][c])]), idxs)
+                    float(data[0, :][c]),
+                    float(data[0, :][c])]), idxs)
         return dict(radiations)
 
     @twython
     def solarenergy_showcase(self, cache):
-        filepattern = 'products/estimated/goes13.*.BAND_01.nc'
+        filepattern = 'product/estimated/goes13.*.BAND_01.nc'
         places = {
             'home': (-33.910528, -60.581059),
             'inta': (-33.944332, -60.568668),
@@ -155,14 +156,14 @@ class Presenter(object):
         users = ['ecolell', 'gersolar']
         radiations = ', '.join(radiations)
         for u in users:
-            self.say('[%s] Irradiancias (W/[m².sr]): [%s]' %
+            self.say('[%s] Radiancias (W/[m².sr]): [%s]' %
                      (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png', str(dt_here))
         self.tweet('Acabamos de estimar la irradiancia solar de las '
                    '%s para el area de Pergamino.' % dt_str,
                    ['area_map.png'])
         tag = random.choice(self.tags)
-        self.tweet('[%s] Irradiancia en W/(m².sr) a partir del '
+        self.tweet('[%s] Radiancia en W/[m².sr] a partir del '
                    'modelo de @gersolar. #%s' % (dt_str, tag),
                    filename)
 
@@ -178,6 +179,7 @@ class Presenter(object):
         decimal = (lambda dt, h: diff(dt, h).hour +
                    diff(dt, h).minute / 60. + diff(dt, h).second / 3600.)
         should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 19
+        filenames = []
         try:
             filenames = goes.download(USER, PASS, './%s' % self.directory,
                                       name=NAME,
@@ -197,9 +199,9 @@ class Presenter(object):
             begin = datetime.now()
             config = {
                 'algorithm': 'heliosat',
-                'data': '%s/goes13.*.BAND_01.nc' % self.directory,
+                'data': '%s/*.nc' % self.directory,
                 'temporal_cache': 'temporal_cache',
-                'product': 'products/estimated'
+                'product': 'product/estimated'
             }
             job = JobDescription(**config)
             job.run()

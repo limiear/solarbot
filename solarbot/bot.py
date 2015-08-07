@@ -185,6 +185,8 @@ class Presenter(object):
         except Exception, e:
             print 'Download skipped: ', e
         self.remove_broked_files(filenames)
+        map(os.remove, glob.glob('temporal_cache/*.nc'))
+        map(os.remove, glob.glob('products/estimated/*.nc'))
         self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
         in_the_week = lambda f: get_datetime(f) >= datetime.utcnow() - timedelta(days=30)
         self.files = filter(in_the_week, self.files)

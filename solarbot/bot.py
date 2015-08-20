@@ -153,14 +153,14 @@ class Presenter(object):
         users = ['ecolell', 'gersolar']
         radiations = ', '.join(radiations)
         for u in users:
-            self.say('[%s] Irradiancias (W/[m².sr]): [%s]' %
+            self.say(u'[%s] Irradiancias (W/[m².sr]): [%s]' %
                      (dt_str, radiations), u)
         filename = draw(filepattern, 'map.png', str(dt_here))
         self.tweet('Acabamos de estimar la irradiancia solar de las '
                    '%s para el area de Pergamino.' % dt_str,
                    ['area_map.png'])
         tag = random.choice(self.tags)
-        self.tweet('[%s] Irradiancia en W/(m².sr) a partir del '
+        self.tweet(u'[%s] Irradiancia en W/(m².sr) a partir del '
                    'modelo de @gersolar. #%s' % (dt_str, tag),
                    filename)
 

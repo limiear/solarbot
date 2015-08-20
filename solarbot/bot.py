@@ -210,6 +210,11 @@ class Presenter(object):
             self.solarenergy_showcase()
 
 
-if __name__ == '__main__':
+def run():
     presenter = Presenter()
     presenter.demonstrate()
+    return presenter
+
+
+if __name__ == '__main__':
+    run()

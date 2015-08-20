@@ -13,7 +13,12 @@ Requirements
 
 If you want to deploy this repository with the default settings, on any GNU/Linux or OSX system you just need to execute the next bash command to setting up all the requirements (GNUMakefile should have been installed to this point).
 
-	$ make deploy
+	$ make virtualenv deploy
+
+On Ubuntu Desktop there are some other libraries not installed by default (zlibc curl libssl1.0.0 libbz2-dev libxslt-dev libxml-dev) which may need to be installed to use these library. Use the next command to automate the installation of the additional C libraries:
+
+    $ make ubuntu virtualenv deploy
+
 
 About
 -----

@@ -178,6 +178,7 @@ class Presenter(object):
         decimal = (lambda dt, h: diff(dt, h).hour +
                    diff(dt, h).minute / 60. + diff(dt, h).second / 3600.)
         should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 19
+        filenames = []
         try:
             filenames = goes.download(USER, PASS, './%s' % self.directory,
                                       name=NAME,

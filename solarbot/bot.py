@@ -5,10 +5,8 @@ from datetime import datetime, timedelta
 from models import JobDescription
 from models.runner import goes
 from populartwitterbot import Bot
-import model.database as db
 from grapher import draw
 import time
-from noaa_keys import USER, PASS, NAME
 import random
 from StringIO import StringIO
 from netcdf import netcdf as nc
@@ -143,7 +141,7 @@ class Presenter(object):
                     float(data[-1][c])]), idxs)
         return dict(radiations)
 
-    def solarenergy_showcase(self, cache):
+    def solarenergy_showcase(self):
         filepattern = '%s/goes13.*.BAND_01.nc' % self.job['product']
         radiations = self.getlastradiation(filepattern, self.places)
         dt = get_datetime(self.files[-1])
@@ -209,9 +207,7 @@ class Presenter(object):
             end = datetime.now()
             self.logger.info('Elapsed time %.2f seconds.' %
                             (end - begin).total_seconds())
-            cache = db.open()
-            self.solarenergy_showcase(cache)
-            db.close(cache)
+            self.solarenergy_showcase()
 
 
 if __name__ == '__main__':

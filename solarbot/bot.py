@@ -62,7 +62,7 @@ class Presenter(object):
         config = self.config['solarbot']
         self.noaaclass = config['noaaclass']
         self.job = config['job']
-        self.places = places['places']
+        self.places = config['places']
         if not os.path.exists(self.noaaclass['folder']):
             os.makedirs(self.noaaclass['folder'])
         self.tags = ['raspberrypi', 'noaa', 'goes', 'satellite',

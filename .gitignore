@@ -28,6 +28,7 @@ var/
 .installed.cfg
 *.egg
 solarbot/twitter_keys.py
+config.setted.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

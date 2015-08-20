@@ -4,11 +4,10 @@
 from datetime import datetime, timedelta
 from models import JobDescription
 from models.runner import goes
-from twython import Twython, TwythonError
+from populartwitterbot import Bot
 import model.database as db
 from grapher import draw
 import time
-from twitter_keys import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
 from noaa_keys import USER, PASS, NAME
 import random
 from StringIO import StringIO
@@ -19,6 +18,13 @@ import glob
 import pytz
 import urllib
 import matplotlib.pyplot as plt
+import json
+import logging
+import urllib3
+
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 short = (lambda f, start=2, end=-2:
                   ".".join((f.split('/')[-1]).split('.')[start:end]))
@@ -26,14 +32,6 @@ get_datetime = lambda f: datetime.strptime(short(f, 1), '%Y.%j.%H%M%S')
 gmt = pytz.timezone('GMT')
 local = pytz.timezone('America/Argentina/Buenos_Aires')
 localize = lambda dt: (gmt.localize(dt)).astimezone(local)
-
-def twython(func):
-    def func_wrapper(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except TwythonError as e:
-            print e
-    return func_wrapper
 
 
 def is_a_broked_file(filename):
@@ -49,15 +47,23 @@ def is_a_broked_file(filename):
 class Presenter(object):
 
     def __init__(self):
-        self.twitter = Twython(
-            APP_KEY,
-            APP_SECRET,
-            OAUTH_TOKEN,
-            OAUTH_TOKEN_SECRET
-        )
-        self.directory = 'data_new'
-        if not os.path.exists(self.directory):
-            os.makedirs(self.directory)
+        self.logger = logging.getLogger("solarbot")
+        self.logger.setLevel(logging.INFO)
+        handler = logging.handlers.RotatingFileHandler(
+            "log_solarbot.out", maxBytes=20, backupCount=5)
+        self.logger.addHandler(handler)
+        if 'CONFIG' in os.environ:
+            CONFIG = os.environ['CONFIG']
+        else:
+            with open('config.json') as f:
+                CONFIG = f.read()
+        self.config = json.loads(CONFIG)
+        self.twitter = Bot(self.config.items()[0])
+        config = self.config['solarbot']
+        self.noaaclass = config['noaaclass']
+        self.job = config['job']
+        if not os.path.exists(self.noaaclass['folder']):
+            os.makedirs(self.noaaclass['folder'])
         self.tags = ['raspberrypi', 'noaa', 'goes', 'satellite',
                      'solarradiation', 'python', 'argentina',
                      'heliosat2']
@@ -77,18 +83,18 @@ class Presenter(object):
             params['media'] = medias[0]
             self.twitter.post('/statuses/update_with_media',
                               params=params)
-        print status, len(status)
+        self.logger.info("%s (%s)" % (status, len(status)))
 
     def say(self, status, screen_name):
-        print status, len(status), screen_name
         self.twitter.send_direct_message(screen_name=screen_name, text=status)
+        self.logger.info("%s (%s) [%s]" % (status, len(status), screen_name))
 
     def indexes(self, lat, lon, place):
         diff = np.sqrt((lat - place[0]) ** 2 + (lon - place[1]) ** 2)
         return diff==diff.min()
 
     def graph_important_point(self, places):
-        with nc.loader('data_new/*.nc') as root:
+        with nc.loader(self.job['data']) as root:
             lat, lon = nc.getvar(root, 'lat'), nc.getvar(root, 'lon')
             data = np.zeros(lat.shape[1:])
             for place in places.items():
@@ -116,7 +122,7 @@ class Presenter(object):
                     "fillcolor:white|%s" % (to_string([refs[0]]), refs_str))
         self.graph_important_point(places)
         urllib.urlretrieve(area_map, 'area_map.png')
-        print area_map
+        self.logger.info(area_map)
         return area_map
 
     def getlastradiation(self, filepattern, places):
@@ -136,9 +142,8 @@ class Presenter(object):
                     float(data[-1][c])]), idxs)
         return dict(radiations)
 
-    @twython
     def solarenergy_showcase(self, cache):
-        filepattern = 'products/estimated/goes13.*.BAND_01.nc'
+        filepattern = '%s/goes13.*.BAND_01.nc' % self.job['product']
         places = {
             'home': (-33.910528, -60.581059),
             'inta': (-33.944332, -60.568668),
@@ -149,7 +154,7 @@ class Presenter(object):
         dt = get_datetime(self.files[-1])
         dt_here = localize(dt)
         dt_str = str(dt_here).split(' ')[-1]
-        print dt_here, dt_str
+        self.logger.info(dt_str)
         radiations = map(lambda t: "%s: %.2f" % (t[0], t[1][0]),
                          radiations.items())
         users = ['ecolell', 'gersolar']
@@ -170,7 +175,7 @@ class Presenter(object):
         size = lambda f: os.stat(f).st_size
         median_size = np.median(np.array(map(size, files)))
         broken = filter(lambda f: size(f) < median_size , files)
-        print broken
+        self.logger.info(str(broken))
         map(os.remove, broken)
 
     def demonstrate(self):
@@ -178,35 +183,37 @@ class Presenter(object):
         decimal = (lambda dt, h: diff(dt, h).hour +
                    diff(dt, h).minute / 60. + diff(dt, h).second / 3600.)
         should_download = lambda dt: decimal(dt, 4) >= 6 and decimal(dt, 4) <= 19
-        try:
-            filenames = goes.download(USER, PASS, './%s' % self.directory,
-                                      name=NAME,
-                                      datetime_filter=should_download)
-        except Exception, e:
-            print 'Download skipped: ', e
+        filenames = []
+        uptime = goes.noaaclass.next_up_datetime()
+        if uptime < pytz.utc.localize(datetime.utcnow()):
+            self.noaaclass["datetime_filter"] = should_download
+            try:
+                filenames = goes.download(**(self.noaaclass))
+            except Exception, e:
+                self.logger.info('Download skipped: %s' % (str(e)))
+        else:
+            self.tweet("The NOAA CLASS is down, the system will be back "
+                       "at %s" % str(uptime))
         self.remove_broked_files(filenames)
-        map(os.remove, glob.glob('temporal_cache/*.nc'))
-        map(os.remove, glob.glob('products/estimated/*.nc'))
-        self.files = sorted(glob.glob('%s/goes13.*.BAND_01.nc' % self.directory))
+        get_temporals = (lambda:
+                         glob.glob('%s/*.nc' % self.job['temporal_cache']))
+        map(os.remove, get_temporals())
+        map(os.remove, glob.glob('%s/*.nc' % self.job['product']))
+        self.files = sorted(glob.glob(self.job['data']))
         in_the_week = lambda f: get_datetime(f) >= datetime.utcnow() - timedelta(days=30)
         self.files = filter(in_the_week, self.files)
         name = lambda f: f.split('/')[-1]
-        temps = glob.glob('temporal_cache/*.nc')
+        temps = get_temporals()
         last_temp = sorted(map(name, temps))[-1] if temps else ''
         last_data = name(self.files[-1]) if self.files else ''
-        print last_temp, last_data
+        self.logger.info("%s %s" % (last_temp, last_data))
         if len(self.files) >= 28 and last_temp != last_data:
             begin = datetime.now()
-            config = {
-                'algorithm': 'heliosat',
-                'data': '%s/goes13.*.BAND_01.nc' % self.directory,
-                'temporal_cache': 'temporal_cache',
-                'product': 'products/estimated'
-            }
-            job = JobDescription(**config)
+            job = JobDescription(**(self.job))
             job.run()
             end = datetime.now()
-            print 'Elapsed time %.2f seconds.' % (end - begin).total_seconds()
+            self.logger.info('Elapsed time %.2f seconds.' %
+                            (end - begin).total_seconds())
             cache = db.open()
             self.solarenergy_showcase(cache)
             db.close(cache)

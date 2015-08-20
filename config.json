@@ -1,8 +1,28 @@
 {
-    "places": {
-        "unlu": [33.4231, 62.2324],
-        "chivilcoy": [33.4231, 62.2324]
-    },
-    "noaaclass": {
+    "solarbot": {
+        "oauth": [
+            {"app_name": "some_name_to_describe",
+            "api_key": "",
+            "api_secret": "",
+            "access": "",
+            "access_secret": "",
+            "enabled": true}
+        ],
+        "places": {
+            "unlu": [33.4231, 62.2324],
+            "chivilcoy": [33.4231, 62.2324]
+        },
+        "noaaclass": {
+            "username": "your_user",
+            "password": "your_pass",
+            "name": "the_suscription_name",
+            "folder": "data_new"
+        },
+        "job": {
+            "algorithm": "heliosat",
+            "data": "data_new/goes13.*.BAND_01.nc",
+            "temporal_cache": "temporal_cache",
+            "product": "products/estimated"
+        }
     }
 }

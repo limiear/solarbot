@@ -62,6 +62,7 @@ class Presenter(object):
         config = self.config['solarbot']
         self.noaaclass = config['noaaclass']
         self.job = config['job']
+        self.places = places['places']
         if not os.path.exists(self.noaaclass['folder']):
             os.makedirs(self.noaaclass['folder'])
         self.tags = ['raspberrypi', 'noaa', 'goes', 'satellite',
@@ -144,13 +145,7 @@ class Presenter(object):
 
     def solarenergy_showcase(self, cache):
         filepattern = '%s/goes13.*.BAND_01.nc' % self.job['product']
-        places = {
-            'home': (-33.910528, -60.581059),
-            'inta': (-33.944332, -60.568668),
-            'campo': (-34.030531, -60.476578),
-            'ernesto': (-33.459296, -61.041577),
-        }
-        radiations = self.getlastradiation(filepattern, places)
+        radiations = self.getlastradiation(filepattern, self.places)
         dt = get_datetime(self.files[-1])
         dt_here = localize(dt)
         dt_str = str(dt_here).split(' ')[-1]

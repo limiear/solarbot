@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 addons:
   apt:
     sources:
@@ -34,7 +34,7 @@ cache:
     - /usr/local/lib
 # command to install dependencies
 install:
-  - "make deploy"
+  - "make virtualenv deploy"
 # command to run tests
 script: "make test-coverage-travis-ci" #nosetests
 after_success:

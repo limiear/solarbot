@@ -9,6 +9,7 @@ addons:
     - libxslt1-dev
     - libxml2-dev
     - python-gevent
+    - python-gdal
     - libhdf5-serial-dev
     - netcdf-bin
     - libnetcdf-dev

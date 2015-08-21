@@ -11,7 +11,7 @@ class TestSolarbot(abstract.TestCase):
         self.bot = bot.run()
         end = datetime.datetime.now()
         elapsed = (end - start).total_seconds()
-        self.assertGreater(elapsed, 50)
+        self.assertGreater(elapsed, 30)
 
 
 if __name__ == '__main__':

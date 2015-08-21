@@ -1,7 +1,10 @@
 sudo: false
 addons:
   apt:
+    sources:
+    - ubuntugis
     packages:
+    - gdal
     - zlibc
     - curl
     - libssl0.9.8

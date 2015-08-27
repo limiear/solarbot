@@ -20,6 +20,14 @@ On Ubuntu Desktop there are some other libraries not installed by default (zlibc
     $ make ubuntu virtualenv deploy
 
 
+Configuration
+-------------
+
+To configure the bot fill the [**config.json**](https://github.com/limiear/solarbot/blob/master/config.json) file with your [NOAA CLASS account](http://www.nsof.class.noaa.gov/), [twitter app account](https://apps.twitter.com/), and a list of places contained inside the images of your suscription. The format of each place should be: 
+
+    "name of the place": [lat, lon],
+
+
 About
 -----
 

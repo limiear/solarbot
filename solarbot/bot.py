@@ -80,7 +80,7 @@ class Presenter(object):
             self.twitter.update_status(status=status)
         else:
             params['media'] = medias[0]
-            self.twitter.post('/statuses/update_with_media',
+            self.twitter._post('/statuses/update_with_media',
                               params=params)
         self.logger.info("%s (%s)" % (status, len(status)))
 
@@ -213,6 +213,7 @@ class Presenter(object):
 def run():
     presenter = Presenter()
     presenter.demonstrate()
+    time.sleep(10)
     return presenter
 
 
